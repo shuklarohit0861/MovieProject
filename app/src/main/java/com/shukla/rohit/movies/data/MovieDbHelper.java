@@ -26,7 +26,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieContract.Movie.COLUMN_TITLE +" TEXT NOT NULL, " +
                 MovieContract.Movie.COLUMN_OVERVIEW + " TEXT NOT NULL," +
                 MovieContract.Movie.COLUMN_RELEASE_DATE + " DATE NOT NULL," +
-                MovieContract.Movie.COLUMN_VOTE_COUNT + " REAL NOT NULL," +
+                MovieContract.Movie.COLUMN_VOTE_AVERAGE + " REAL NOT NULL," +
                 MovieContract.Movie.COLUMN_POSTER_PATH + " TEXT NOT NULL," +
                 MovieContract.Movie.COLUMN_POPULAR_MOVIES + " BOOLEAN DEFAULT 'FALSE',"+
                 MovieContract.Movie.COLUMN_TOPRATED_MOVIES + " BOOLEAN DEFAULT 'FALSE'," +
@@ -39,7 +39,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 " (" + MovieContract.Youtube.ID + " TEXT, " + MovieContract.Youtube.YOUTUBE_ID + " TEXT NOT NULL," +
                 " FOREIGN KEY (" + MovieContract.Youtube.ID + ")"+ " REFERENCES " + MovieContract.Movie.TABLE_NAME + " ("
                 + MovieContract.Movie.COLUMN_ID + ") ON DELETE CASCADE );";
-        Log.v("YouTUBE TABLE", CREATE_TABLE_YOUTUBE);
+        Log.v("YOUTUBE TABLE", CREATE_TABLE_YOUTUBE);
 
         final String CREATE_TABLE_MOVIE_REVIEW = "CREATE TABLE " + MovieContract.MovieReview.TABLE_NAME +
                 " (" + MovieContract.MovieReview.ID + " TEXT, " + MovieContract.MovieReview.REVIEW + " TEXT NOT NULL,"+

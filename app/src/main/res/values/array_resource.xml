@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="movies_type">
+        <item>@string/toprated</item>
+        <item>@string/favorite</item>
+        <item>@string/popular_movies</item>
+    </string-array>
+    <string-array name="movie_values">
+        <item>@string/toprated_value</item>
+        <item>@string/favorite_value</item>
+        <item>@string/popular_movies_value</item>
+    </string-array>
+</resources>

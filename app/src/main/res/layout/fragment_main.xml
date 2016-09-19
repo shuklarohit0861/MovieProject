@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnWidth="130dp"
+    android:columnWidth="150dp"
     android:numColumns="auto_fit"
     android:verticalSpacing="0dp"
     android:horizontalSpacing="0dp"

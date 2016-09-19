@@ -82,7 +82,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                         values1.put(MovieContract.Movie.COLUMN_TITLE,result.title);
                         values1.put(MovieContract.Movie.COLUMN_OVERVIEW,result.overview);
                         values1.put(MovieContract.Movie.COLUMN_RELEASE_DATE,result.releaseDate);
-                        values1.put(MovieContract.Movie.COLUMN_VOTE_COUNT,result.voteCount);
+                        values1.put(MovieContract.Movie.COLUMN_VOTE_AVERAGE,result.voteAverage);
                         values1.put(MovieContract.Movie.COLUMN_POSTER_PATH,result.posterPath);
                         values1.put(MovieContract.Movie.COLUMN_TOPRATED_MOVIES,true);
                         values1.put(MovieContract.Movie.COLUMN_POPULARITY,result.popularity);
@@ -118,14 +118,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         String whereCondition = MovieContract.Movie.COLUMN_TOPRATED_MOVIES +" = ?";
 
-        String order = MovieContract.Movie.COLUMN_POPULARITY + " ASC";
+        String order = MovieContract.Movie.COLUMN_VOTE_AVERAGE + " DESC";
         Uri uri = MovieContract.Movie.CONTENT_URI;
 
         return new CursorLoader(getActivity(),
                 uri,
-                null,
+                new String[]{MovieContract.Movie._ID,MovieContract.Movie.COLUMN_POSTER_PATH},
                 whereCondition,
-                new String[]{"true"},
+                new String[]{"1"},
                 order);
     }
 
