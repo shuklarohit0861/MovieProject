@@ -6,11 +6,13 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        ></FrameLayout>
+        android:id="@+id/fragment_main"
+        android:name = "com.shukla.rohit.movies.MainActivityFragment" />
 
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"
+        android:id="@+id/fragmentDetail"/>
 
 </LinearLayout>

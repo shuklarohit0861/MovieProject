@@ -22,16 +22,35 @@ public class MovieAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
         View view = LayoutInflater.from(context).inflate(R.layout.img,viewGroup,false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        view.setTag(viewHolder);
+
+
         return view;
+    }
+
+    public static class ViewHolder
+    {
+        public final ImageView imageView;
+
+        public ViewHolder(View view)
+
+        {
+            imageView = (ImageView) view.findViewById(R.id.imageViewRecycle);
+        }
+
+
+
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
          int posterPathIndex = cursor.getColumnIndex(MovieContract.Movie.COLUMN_POSTER_PATH);
         String posterPath = cursor.getString(posterPathIndex);
         String url = "http://image.tmdb.org/t/p/w500/"+ posterPath;
 
-        Picasso.with(context).load(url).into((ImageView)view.findViewById(R.id.imageViewRecycle));
+        Picasso.with(context).load(url).into(viewHolder.imageView);
 
     }
 }

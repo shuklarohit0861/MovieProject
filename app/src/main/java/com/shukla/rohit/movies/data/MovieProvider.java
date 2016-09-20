@@ -215,7 +215,7 @@ public class MovieProvider extends ContentProvider {
                         cursor.moveToFirst();
                         if(cursor.getInt(0) != 0)
                         {
-                           int i = db.update(MovieContract.Movie.TABLE_NAME,values1," WHERE "+ MovieContract.Movie.COLUMN_ID + " = ?",
+                           int i = db.update(MovieContract.Movie.TABLE_NAME,values1,MovieContract.Movie.COLUMN_ID + " = ?",
                                    new String[]{values1.getAsString(MovieContract.Movie.COLUMN_ID)});
                             returnCount = returnCount + i;
                         }

@@ -4,6 +4,4 @@
     android:id="@+id/imageViewRecycle"
     android:layout_width="match_parent"
     android:scaleType="centerCrop">
-
-
 </ImageView>
