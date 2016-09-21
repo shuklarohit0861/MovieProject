@@ -40,7 +40,7 @@ import retrofit2.Response;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = "APi key";
     private static final int MOVIE_LOADER = 0;
     private MovieAdapter mMovieAdapter;
     private String mMoviePref;
