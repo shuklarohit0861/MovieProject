@@ -40,7 +40,7 @@ import retrofit2.Response;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String API_KEY = "23133a089180c7fe6697cea84789f691";
+    private static final String API_KEY = "";
     private static final int MOVIE_LOADER = 0;
     private MovieAdapter mMovieAdapter;
     private String mMoviePref;
@@ -81,9 +81,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
-                Intent intent = new Intent(getContext(),MovieDetails.class);
-               Uri uri =  MovieContract.Movie.buildMovieURI(Long.getLong(cursor.getString(i)));
-                intent.putExtra("URI",uri);
+                Intent intent = new Intent(getContext(),MovieDetails.class)
+                        .setData(MovieContract.Movie.buildMovieID(cursor.getString(1)));
                 startActivity(intent);
             }
         });
