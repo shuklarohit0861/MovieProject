@@ -2,6 +2,7 @@ package com.shukla.rohit.movies;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -17,6 +18,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     Call<MovieModel> call;
     boolean topMovies = false;
     boolean popularMovies = false;
+     private String order = null;
 
 
 
@@ -67,27 +70,44 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         mMoviePref = mPreferences.getString(getString(R.string.key_pref),getString(R.string.popular_movies_value));
 
+
         mMovieAdapter = new MovieAdapter(getContext(),null,0);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GetResposeInterface getResposeInterface = TheMovieDataBase.getClient().create(GetResposeInterface.class);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridView);
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+                Intent intent = new Intent(getContext(),MovieDetails.class);
+               Uri uri =  MovieContract.Movie.buildMovieURI(Long.getLong(cursor.getString(i)));
+                intent.putExtra("URI",uri);
+                startActivity(intent);
+            }
+        });
+
         switch (mMoviePref)
         {
             case "0":
                 whereCondition = MovieContract.Movie.COLUMN_FAVORITE_MOVIES + " = ?";
+                ((MainActivity)getContext()).setTitle(getString(R.string.favorite));
 
                 break;
             case "1":
                 whereCondition = MovieContract.Movie.COLUMN_TOPRATED_MOVIES + " = ?";
                 call = getResposeInterface.getTopRatedMovies(API_KEY);
+                order = MovieContract.Movie.COLUMN_VOTE_AVERAGE + " DESC";
                 topMovies = true;
+                ((MainActivity)getContext()).setTitle(getString(R.string.toprated));
                 break;
             case "2":
                 whereCondition = MovieContract.Movie.COLUMN_POPULAR_MOVIES + " = ?";
                 call = getResposeInterface.getPopularMovies(API_KEY);
+                order = MovieContract.Movie.COLUMN_POPULARITY;
                 popularMovies = true;
+                ((MainActivity)getContext()).setTitle(getString(R.string.popular_movies));
                 break;
         }
 
@@ -103,7 +123,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             {
                 Toast.makeText(getContext(), "check your internet connections....", Toast.LENGTH_LONG).show();
             }
-            if (mMoviePref.equals("0")) {
+            if  (mMoviePref.equals("0")) {
                 Toast.makeText(getContext(), "you have no Favorite Movie", Toast.LENGTH_LONG).show();
             }
             else
@@ -155,12 +175,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 
-        String order = MovieContract.Movie.COLUMN_VOTE_AVERAGE + " DESC";
+
         Uri uri = MovieContract.Movie.CONTENT_URI;
 
         return new CursorLoader(getActivity(),
                 uri,
-                new String[]{MovieContract.Movie._ID,MovieContract.Movie.COLUMN_POSTER_PATH},
+                new String[]{MovieContract.Movie._ID, MovieContract.Movie.COLUMN_ID,MovieContract.Movie.COLUMN_POSTER_PATH},
                 whereCondition,
                 new String[]{"1"},
                 order);

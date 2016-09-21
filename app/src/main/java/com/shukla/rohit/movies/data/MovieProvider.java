@@ -69,6 +69,9 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case MOVIES_WITH_ID:{
+                String id = MovieContract.Movie.getMovieID(uri);
+                selection = MovieContract.Movie.COLUMN_ID + " = ?";
+                selectionArgu = new String[]{id};
                 cursor = mDbHelper.getReadableDatabase().query(
                         MovieContract.Movie.TABLE_NAME,
                         column,
@@ -82,6 +85,9 @@ public class MovieProvider extends ContentProvider {
             }
             case YOUTUBE_WITH_ID:
             {
+                String id = MovieContract.Youtube.getYoutubeId(uri);
+                selection = MovieContract.Youtube.YOUTUBE_ID + " = ?";
+                selectionArgu = new String[]{id};
                 cursor = mDbHelper.getReadableDatabase().query(
                         MovieContract.Youtube.TABLE_NAME,
                         column,
@@ -95,6 +101,9 @@ public class MovieProvider extends ContentProvider {
             }
             case REVIEW_WITH_ID:
             {
+                String id = MovieContract.MovieReview.getMovieReviewId(uri);
+                selection = MovieContract.MovieReview.ID + " = ?";
+                selectionArgu = new String[]{id};
                 cursor = mDbHelper.getReadableDatabase().query(
                         MovieContract.MovieReview.TABLE_NAME,
                         column,
