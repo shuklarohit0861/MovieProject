@@ -17,12 +17,12 @@ public interface GetResposeInterface {
     Call<MovieModel> getPopularMovies(@Query("api_key") String apiKey);
 
     @GET("movie/{id}")
-    Call<Result> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
+    Call<Result> getMovieDetails(@Path("id") String id, @Query("api_key") String apiKey);
 
     @GET("movie/{id}/videos")
-    Call<VideoTrailer> getMovieTrailer(@Path("id") int id,@Query("api_key") String apiKey);
+    Call<VideoTrailer> getMovieTrailer(@Path("id") String id,@Query("api_key") String apiKey);
 
-    @GET("movie/(id)/review")
-    Call<MovieReviews> getMovieReview(@Path("id") int id,@Query("api_key") String apiKey);
+    @GET("movie/{id}/reviews")
+    Call<MovieReviews> getMovieReview(@Path("id") String id,@Query("api_key") String apiKey);
 
 }

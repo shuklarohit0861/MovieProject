@@ -275,7 +275,7 @@ public class MovieProvider extends ContentProvider {
                 try{
                     for (ContentValues values1 : values)
                     {
-                        long _id = db.insert(MovieContract.Movie.TABLE_NAME,null,values1);
+                        long _id = db.insert(MovieContract.MovieReview.TABLE_NAME,null,values1);
                         if(_id != -1)
                         {
                             returnCount++;

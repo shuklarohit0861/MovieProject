@@ -40,14 +40,14 @@ import retrofit2.Response;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String API_KEY = "APi key";
+    private static final String API_KEY = "23133a089180c7fe6697cea84789f691";
     private static final int MOVIE_LOADER = 0;
     private MovieAdapter mMovieAdapter;
     private String mMoviePref;
      private SharedPreferences mPreferences;
     private String whereCondition;
     Call<MovieModel> call;
-    boolean topMovies = false;
+    boolean topMovies = false;  
     boolean popularMovies = false;
      private String order = null;
 

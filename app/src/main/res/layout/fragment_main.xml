@@ -10,6 +10,4 @@
     tools:context="com.shukla.rohit.movies.MainActivityFragment"
     tools:showIn="@layout/activity_main"
     android:id="@+id/gridView">
-
-
 </GridView>
