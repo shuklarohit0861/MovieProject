@@ -16,6 +16,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -52,7 +55,30 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
      private String order = null;
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.mainrefresh,menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        if(id == R.id.action_reset)
+        {
+            getActivity().getContentResolver().delete(MovieContract.Movie.CONTENT_URI,
+                    MovieContract.Movie.COLUMN_FAVORITE_MOVIES +" = ?",
+                    new String[]{"FALSE"});
+            callInternet();
+            return  true;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+
+
+    }
 
     public MainActivityFragment() {
     }
@@ -127,39 +153,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             }
             else
             {
-                call.enqueue(new Callback<MovieModel>() {
-                    @Override
-                    public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
-
-                        List<Result> results = response.body().results;
-                        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
-
-                        for (Result result : results) {
-                            ContentValues values1 = new ContentValues();
-                            values1.put(MovieContract.Movie.COLUMN_ID, result.id);
-                            values1.put(MovieContract.Movie.COLUMN_TITLE, result.title);
-                            values1.put(MovieContract.Movie.COLUMN_OVERVIEW, result.overview);
-                            values1.put(MovieContract.Movie.COLUMN_RELEASE_DATE, result.releaseDate);
-                            values1.put(MovieContract.Movie.COLUMN_VOTE_AVERAGE, result.voteAverage);
-                            values1.put(MovieContract.Movie.COLUMN_POSTER_PATH, result.posterPath);
-                            values1.put(MovieContract.Movie.COLUMN_TOPRATED_MOVIES, topMovies);
-                            values1.put(MovieContract.Movie.COLUMN_POPULAR_MOVIES, popularMovies);
-                            values1.put(MovieContract.Movie.COLUMN_POPULARITY, result.popularity);
-                            contentValuesList.add(values1);
-                        }
-
-                        ContentValues[] moviedetails = new ContentValues[contentValuesList.size()];
-                        contentValuesList.toArray(moviedetails);
-                        getContext().getContentResolver().bulkInsert(MovieContract.Movie.CONTENT_URI, moviedetails);
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<MovieModel> call, Throwable t) {
-
-                    }
-                });
-
+               callInternet();
             }
 
         }
@@ -201,5 +195,41 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         return isConnected;
+    }
+
+    private void callInternet()
+    {
+        call.enqueue(new Callback<MovieModel>() {
+            @Override
+            public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+
+                List<Result> results = response.body().results;
+                List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
+
+                for (Result result : results) {
+                    ContentValues values1 = new ContentValues();
+                    values1.put(MovieContract.Movie.COLUMN_ID, result.id);
+                    values1.put(MovieContract.Movie.COLUMN_TITLE, result.title);
+                    values1.put(MovieContract.Movie.COLUMN_OVERVIEW, result.overview);
+                    values1.put(MovieContract.Movie.COLUMN_RELEASE_DATE, result.releaseDate);
+                    values1.put(MovieContract.Movie.COLUMN_VOTE_AVERAGE, result.voteAverage);
+                    values1.put(MovieContract.Movie.COLUMN_POSTER_PATH, result.posterPath);
+                    values1.put(MovieContract.Movie.COLUMN_TOPRATED_MOVIES, topMovies);
+                    values1.put(MovieContract.Movie.COLUMN_POPULAR_MOVIES, popularMovies);
+                    values1.put(MovieContract.Movie.COLUMN_POPULARITY, result.popularity);
+                    contentValuesList.add(values1);
+                }
+
+                ContentValues[] moviedetails = new ContentValues[contentValuesList.size()];
+                contentValuesList.toArray(moviedetails);
+                getContext().getContentResolver().bulkInsert(MovieContract.Movie.CONTENT_URI, moviedetails);
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieModel> call, Throwable t) {
+
+            }
+        });
     }
 }

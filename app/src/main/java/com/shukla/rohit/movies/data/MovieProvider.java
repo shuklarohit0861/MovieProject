@@ -86,7 +86,7 @@ public class MovieProvider extends ContentProvider {
             case YOUTUBE_WITH_ID:
             {
                 String id = MovieContract.Youtube.getYoutubeId(uri);
-                selection = MovieContract.Youtube.YOUTUBE_ID + " = ?";
+                selection = MovieContract.Youtube.ID + " = ? ";
                 selectionArgu = new String[]{id};
                 cursor = mDbHelper.getReadableDatabase().query(
                         MovieContract.Youtube.TABLE_NAME,

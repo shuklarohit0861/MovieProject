@@ -11,4 +11,5 @@
     <string name="favorite_value" translatable="false">0</string>
     <string name="toprated_value" translatable="false">1</string>
     <string name="popular_movies_value" translatable="false">2</string>
+    <string name="refresh">Refrese</string>
 </resources>

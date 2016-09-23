@@ -65,7 +65,7 @@ public class MovieDetailsFragment extends Fragment  {
     private String APIKEY = "23133a089180c7fe6697cea84789f691";
     String id;
     private ListView mYoutubeListView;
-    private static final int YOUTUBE_ADAPTER= 0;
+    private static final int YOUTUBE_ADAPTER= 1;
 
 
     public MovieDetailsFragment() {
@@ -104,8 +104,6 @@ public class MovieDetailsFragment extends Fragment  {
                         ContentValues[] youtube = new ContentValues[contentValuesList.size()];
                         contentValuesList.toArray(youtube);
                         getActivity().getContentResolver().bulkInsert(MovieContract.Youtube.CONTENT_URI,youtube);
-
-
                     }
 
                     @Override
@@ -149,8 +147,6 @@ public class MovieDetailsFragment extends Fragment  {
         title = (TextView) view.findViewById(R.id.title_TextView);
         poster = (ImageView) view.findViewById(R.id.poster);
         overviewTextView = (TextView) view.findViewById(R.id.overviewTextView);
-
-        mYoutubeListView.setAdapter(youtubeAdapter);
 
         return view;
     }
@@ -220,6 +216,7 @@ public class MovieDetailsFragment extends Fragment  {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             youtubeAdapter = new YoutubeAdapter(getContext(),data,YOUTUBE_ADAPTER);
+            mYoutubeListView.setAdapter(youtubeAdapter);
         }
 
         @Override
@@ -231,7 +228,8 @@ public class MovieDetailsFragment extends Fragment  {
 
     private int count(String id)
     {
-
+            Uri uri = MovieContract.Youtube.buildYoutubeId(id);
+        Log.v("Youtube URI",String.valueOf(uri));
         Cursor count = getActivity().getContentResolver().query(MovieContract.Youtube.buildYoutubeId(id),
                         new String[]{MovieContract.Youtube.ID},
                         null,

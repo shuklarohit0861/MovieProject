@@ -70,6 +70,7 @@ public class MovieContract {
         public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" +AUTHORITY +"/"+PATH_YOUTUBE;
 
         public static final String TABLE_NAME = "YouTube";
+        public static final String _ID = "_id";
         public static final String ID = "Id";
         public static final String YOUTUBE_ID = "youtube_id";
 
@@ -101,6 +102,7 @@ public class MovieContract {
         public static final String CONTENT_TYPE_ITEM = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + AUTHORITY + "/"+ PATH_MOVIE_REVIEW;
 
         public static final String TABLE_NAME ="MovieReviews";
+        public static final String _ID = "_id";
         public static final String ID = "id";
         public static final String REVIEW = "review";
         public static final String REVIEWED_BY = "reviewed_by";
