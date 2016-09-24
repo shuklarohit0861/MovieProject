@@ -51,8 +51,9 @@ public class MovieDetailsFragment extends Fragment  {
             MovieContract.Movie.COLUMN_RELEASE_DATE,
             MovieContract.Movie.COLUMN_OVERVIEW
     };
-     private YoutubeAdapter youtubeAdapter;
-     private TextView releaseDate ;
+    private YoutubeAdapter youtubeAdapter;
+    private ReviewAdapter reviewAdapter;
+    private TextView releaseDate ;
     private ImageView poster;
     private TextView rating;
     private TextView title;
@@ -60,12 +61,15 @@ public class MovieDetailsFragment extends Fragment  {
     String url = "http://image.tmdb.org/t/p/w500/";
     private static final int MOVIE_DETAIL_LOADER = 0;
     private static final int YOUTUBE_LOADER = 1;
+    private static final int REVIEW_LOADER = 2;
     Call<VideoTrailer> call;
     Call<MovieReviews> reviewsCall;
     private String APIKEY = "23133a089180c7fe6697cea84789f691";
-    String id;
+    String movieId;
     private ListView mYoutubeListView;
+    private ListView mReviewListview;
     private static final int YOUTUBE_ADAPTER= 1;
+    private static final int REVIEW_ADAPTER = 2;
 
 
     public MovieDetailsFragment() {
@@ -78,70 +82,74 @@ public class MovieDetailsFragment extends Fragment  {
         GetResposeInterface getResposeInterface = TheMovieDataBase.getClient().create(GetResposeInterface.class);
         Intent intent = getActivity().getIntent();
         Uri uri = intent.getData();
-        id = MovieContract.Movie.getMovieID(uri);
+        movieId = MovieContract.Movie.getMovieID(uri);
 
-        if(count(id)== 0);
+
+
+        if(count(movieId));
         {
             if(checkInternet(getActivity()))
             {
-                call = getResposeInterface.getMovieTrailer(id,APIKEY);
-                call.enqueue(new Callback<VideoTrailer>() {
-                    @Override
-                    public void onResponse(Call<VideoTrailer> call, Response<VideoTrailer> response) {
+                call = getResposeInterface.getMovieTrailer(movieId,APIKEY);
+                reviewsCall = getResposeInterface.getMovieReview(movieId,APIKEY);
+                if(!call.isExecuted()&&!reviewsCall.isExecuted()) {
+                    call.enqueue(new Callback<VideoTrailer>() {
+                        @Override
+                        public void onResponse(Call<VideoTrailer> call, Response<VideoTrailer> response) {
 
-                        List<VideoTralerDetails> videoTrailerList = response.body().results;
+                            List<VideoTralerDetails> videoTrailerList = response.body().results;
 
-                        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
+                            List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
 
-                        for (VideoTralerDetails videoTralerDetails :videoTrailerList)
-                        {
-                            ContentValues values = new ContentValues();
-                            values.put(MovieContract.Youtube.ID,id);
-                            values.put(MovieContract.Youtube.YOUTUBE_ID,videoTralerDetails.id);
-                            contentValuesList.add(values);
+                            for (VideoTralerDetails videoTralerDetails : videoTrailerList) {
+                                ContentValues values = new ContentValues();
+                                values.put(MovieContract.Youtube.ID, movieId);
+                                values.put(MovieContract.Youtube.YOUTUBE_ID, videoTralerDetails.key);
+                                contentValuesList.add(values);
+                            }
+
+                            ContentValues[] youtube = new ContentValues[contentValuesList.size()];
+                            contentValuesList.toArray(youtube);
+                            getActivity().getContentResolver().bulkInsert(MovieContract.Youtube.CONTENT_URI, youtube);
                         }
 
-                        ContentValues[] youtube = new ContentValues[contentValuesList.size()];
-                        contentValuesList.toArray(youtube);
-                        getActivity().getContentResolver().bulkInsert(MovieContract.Youtube.CONTENT_URI,youtube);
-                    }
+                        @Override
+                        public void onFailure(Call<VideoTrailer> call, Throwable t) {
 
-                    @Override
-                    public void onFailure(Call<VideoTrailer> call, Throwable t) {
+                        }
+                    });
 
-                    }
-                });
 
-                reviewsCall = getResposeInterface.getMovieReview(id,APIKEY);
-                reviewsCall.enqueue(new Callback<MovieReviews>() {
-                    @Override
-                    public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
+                    reviewsCall.enqueue(new Callback<MovieReviews>() {
+                        @Override
+                        public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
 
-                        List<ReviewDetails> reviewDetailsList = response.body().results;
-                        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
-                        for(ReviewDetails details:reviewDetailsList)
-                        {
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(MovieContract.MovieReview.ID,id);
-                            contentValues.put(MovieContract.MovieReview.REVIEW,details.content);
-                            contentValues.put(MovieContract.MovieReview.REVIEWED_BY,details.author);
-                            contentValuesList.add(contentValues);
+                            List<ReviewDetails> reviewDetailsList = response.body().results;
+                            List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
+                            for (ReviewDetails details : reviewDetailsList) {
+                                ContentValues contentValues = new ContentValues();
+                                contentValues.put(MovieContract.MovieReview.ID, movieId);
+                                contentValues.put(MovieContract.MovieReview.REVIEW, details.content);
+                                contentValues.put(MovieContract.MovieReview.REVIEWED_BY, details.author);
+                                contentValuesList.add(contentValues);
+                            }
+
+                            ContentValues[] reviews = new ContentValues[contentValuesList.size()];
+                            contentValuesList.toArray(reviews);
+                            getActivity().getContentResolver().bulkInsert(MovieContract.MovieReview.CONTENT_URI, reviews);
                         }
 
-                        ContentValues [] reviews = new ContentValues[contentValuesList.size()];
-                        contentValuesList.toArray(reviews);
-                        getActivity().getContentResolver().bulkInsert(MovieContract.MovieReview.CONTENT_URI,reviews);
-                    }
+                        @Override
+                        public void onFailure(Call<MovieReviews> call, Throwable t) {
 
-                    @Override
-                    public void onFailure(Call<MovieReviews> call, Throwable t) {
-
-                    }
-                });
+                        }
+                    });
+                }
             }
         }
         View view = inflater.inflate(R.layout.fragment_movie_details, container, false);
         mYoutubeListView = (ListView) view.findViewById(R.id.listView);
+        mReviewListview = (ListView)view.findViewById(R.id.listView_review);
         releaseDate = (TextView)view.findViewById(R.id.releaseDateTextView);
         rating = (TextView) view.findViewById(R.id.ratingTextView);
         title = (TextView) view.findViewById(R.id.title_TextView);
@@ -155,12 +163,12 @@ public class MovieDetailsFragment extends Fragment  {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(MOVIE_DETAIL_LOADER,null,new DetailsLoader());
         getLoaderManager().initLoader(YOUTUBE_LOADER,null,new LoaderYouTube());
+        getLoaderManager().initLoader(REVIEW_LOADER,null,new ReviewLoader());
         super.onActivityCreated(savedInstanceState);
 
     }
 
     private class DetailsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
-
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
@@ -177,8 +185,6 @@ public class MovieDetailsFragment extends Fragment  {
                     null
             );
         }
-
-
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (data != null && data.moveToFirst()) {
@@ -188,45 +194,64 @@ public class MovieDetailsFragment extends Fragment  {
                 rating.setText(data.getString(4));
                 Picasso.with(getActivity()).load(url + data.getString(3)).into(poster);
                 overviewTextView.setText(data.getString(6));
-
             }
         }
-
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
         }
-
     }
 
     private class LoaderYouTube implements LoaderManager.LoaderCallbacks<Cursor>
     {
-
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            return new CursorLoader(getContext(), MovieContract.Youtube.buildYoutubeId(String.valueOf(id)),
-                    new String[]{MovieContract.Youtube._ID,MovieContract.Youtube.ID, MovieContract.Youtube.YOUTUBE_ID},
+            return new CursorLoader(getContext(), MovieContract.Youtube.buildYoutubeId(String.valueOf(movieId)),
+                    new String[]{MovieContract.Youtube._ID, MovieContract.Youtube.YOUTUBE_ID},
                     null,
                     null,
                     null
                     );
         }
-
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            Log.v("data",String.valueOf(data.getCount()));
             youtubeAdapter = new YoutubeAdapter(getContext(),data,YOUTUBE_ADAPTER);
             mYoutubeListView.setAdapter(youtubeAdapter);
         }
-
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
             youtubeAdapter.swapCursor(null);
         }
     }
 
-    private int count(String id)
+    private class ReviewLoader implements LoaderManager.LoaderCallbacks<Cursor>
+    {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(getContext(), MovieContract.MovieReview.buildMovieReviewId(movieId),
+                    new String[]{MovieContract.MovieReview._ID, MovieContract.MovieReview.REVIEW, MovieContract.MovieReview.REVIEWED_BY},
+                    null,
+                    null,
+                    null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                reviewAdapter = new ReviewAdapter(getContext(),data,REVIEW_LOADER);
+            mReviewListview.setAdapter(reviewAdapter);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            reviewAdapter.swapCursor(null);
+
+
+        }
+    }
+
+    private boolean count(String id)
     {
             Uri uri = MovieContract.Youtube.buildYoutubeId(id);
         Log.v("Youtube URI",String.valueOf(uri));
@@ -235,7 +260,14 @@ public class MovieDetailsFragment extends Fragment  {
                         null,
                         null,
                         null);
-                return count.getCount();
+                int nub = count.getCount();
+
+            if (nub == 0)
+            {
+                return  true;
+            }
+        else
+                return false;
 
             }
     public boolean checkInternet(Context context) {

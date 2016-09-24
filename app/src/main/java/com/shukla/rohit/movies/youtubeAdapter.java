@@ -2,6 +2,7 @@ package com.shukla.rohit.movies;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,16 +35,14 @@ public class YoutubeAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         int posterPathIndex = cursor.getColumnIndex(MovieContract.Youtube.YOUTUBE_ID);
         String youtubeId = cursor.getString(posterPathIndex);
+        Log.v("YOUTUBE ID",youtubeId);
         String url = "https://img.youtube.com/vi/"+youtubeId+"/0.jpg";
         Picasso.with(context).load(url).into(viewHolder.imageView);
-
     }
     public static class ViewHolder
     {
         public final ImageView imageView;
-
         public ViewHolder(View view)
-
         {
             imageView = (ImageView) view.findViewById(R.id.youtubeListImg);
         }

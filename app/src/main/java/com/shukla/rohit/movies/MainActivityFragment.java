@@ -57,8 +57,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+
         inflater.inflate(R.menu.mainrefresh,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
     }
 
     @Override
@@ -70,14 +72,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             getActivity().getContentResolver().delete(MovieContract.Movie.CONTENT_URI,
                     MovieContract.Movie.COLUMN_FAVORITE_MOVIES +" = ?",
                     new String[]{"FALSE"});
-            callInternet();
+            if(!call.isExecuted()) {
+                callInternet();
+            }
             return  true;
 
         }
 
         return super.onOptionsItemSelected(item);
-
-
     }
 
     public MainActivityFragment() {
@@ -93,6 +95,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        setHasOptionsMenu(true);
 
         mMoviePref = mPreferences.getString(getString(R.string.key_pref),getString(R.string.popular_movies_value));
 

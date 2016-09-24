@@ -12,7 +12,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "movie.db";
 
-    static final int DATABASEVERSION = 2;
+    static final int DATABASEVERSION = 3;
 
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASEVERSION);
@@ -36,13 +36,13 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         Log.v("Movie TABLE",CREATE_TABLE_MOVIE);
 
         final String CREATE_TABLE_YOUTUBE = "CREATE TABLE " + MovieContract.Youtube.TABLE_NAME +
-                " (" + MovieContract.Youtube._ID+ " INT AUTO_INCREMENT, " + MovieContract.Youtube.ID + " TEXT, " + MovieContract.Youtube.YOUTUBE_ID + " TEXT NOT NULL," +
+                " (" + MovieContract.Youtube.ID + " TEXT, " + MovieContract.Youtube.YOUTUBE_ID + " TEXT NOT NULL," +
                 " FOREIGN KEY (" + MovieContract.Youtube.ID + ")"+ " REFERENCES " + MovieContract.Movie.TABLE_NAME + " ("
                 + MovieContract.Movie.COLUMN_ID + ") ON DELETE CASCADE );";
         Log.v("YOUTUBE TABLE", CREATE_TABLE_YOUTUBE);
 
         final String CREATE_TABLE_MOVIE_REVIEW = "CREATE TABLE " + MovieContract.MovieReview.TABLE_NAME +
-                " ("+MovieContract.MovieReview._ID+" INT AUTO_INCREMENT, " + MovieContract.MovieReview.ID + " TEXT, " + MovieContract.MovieReview.REVIEW + " TEXT NOT NULL,"+
+                " (" + MovieContract.MovieReview.ID + " TEXT, " + MovieContract.MovieReview.REVIEW + " TEXT NOT NULL,"+
                 MovieContract.MovieReview.REVIEWED_BY + " TEXT NOT NULL," + "FOREIGN KEY (" + MovieContract.MovieReview.ID +") "+
                 "REFERENCES " + MovieContract.Movie.TABLE_NAME +" ("+ MovieContract.Movie.COLUMN_ID + ") ON DELETE CASCADE );";
 
@@ -56,12 +56,10 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.Movie.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieReview.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.Youtube.TABLE_NAME);
         onCreate(sqLiteDatabase);
-
     }
     @Override
     public void onOpen(SQLiteDatabase db){
