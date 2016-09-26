@@ -187,6 +187,9 @@ public class MovieProvider extends ContentProvider {
         {
             case MOVIES_WITH_ID:
             {
+                String id = MovieContract.Movie.getMovieID(uri);
+                selection = MovieContract.Movie.COLUMN_ID +" = ?";
+                selectionArgs = new String[]{id};
                 updateRow = db.update(MovieContract.Movie.TABLE_NAME,contentValues,selection,selectionArgs);
                 break;
             }
@@ -222,9 +225,10 @@ public class MovieProvider extends ContentProvider {
                     {
                         cursor = db.rawQuery(rawQuery,new String[] {values1.getAsString(MovieContract.Movie.COLUMN_ID)} );
                         cursor.moveToFirst();
+
                         if(cursor.getInt(0) != 0)
                         {
-                           int i = db.update(MovieContract.Movie.TABLE_NAME,values1,MovieContract.Movie.COLUMN_ID + " = ?",
+                             int i = db.update(MovieContract.Movie.TABLE_NAME,values1,MovieContract.Movie.COLUMN_ID + " = ?",
                                    new String[]{values1.getAsString(MovieContract.Movie.COLUMN_ID)});
                             returnCount = returnCount + i;
                         }

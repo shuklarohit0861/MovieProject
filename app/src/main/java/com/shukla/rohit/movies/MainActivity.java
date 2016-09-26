@@ -12,6 +12,8 @@ import com.facebook.stetho.Stetho;
 public class MainActivity extends AppCompatActivity {
 
     private boolean mTwopane;
+    private static final String MOVIEDETAIL_TAG = "DFTAG";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +26,11 @@ public class MainActivity extends AppCompatActivity {
         {
             mTwopane = true;
 
-            if(savedInstanceState != null)
+            if(savedInstanceState == null)
             {
-               // getSupportFragmentManager().beginTransaction().add(R.id.fragmentDetail,new MovieDetailsFragment())
-                //        .commit();
+               getSupportFragmentManager().beginTransaction()
+                       .replace(R.id.fragmentDetail,new MovieDetailsFragment(),MOVIEDETAIL_TAG)
+                        .commit();
             }
         }
         else

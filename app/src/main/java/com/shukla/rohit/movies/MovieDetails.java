@@ -13,6 +13,14 @@ public class MovieDetails extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragmentDetail, new MovieDetailsFragment())
+                    .commit();
+        }
+
+
     }
 
 }

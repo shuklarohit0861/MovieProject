@@ -72,9 +72,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             getActivity().getContentResolver().delete(MovieContract.Movie.CONTENT_URI,
                     MovieContract.Movie.COLUMN_FAVORITE_MOVIES +" = ?",
                     new String[]{"FALSE"});
-            if(!call.isExecuted()) {
-                callInternet();
-            }
+           if(mMoviePref.equals("1")||mMoviePref.equals("2")) {
+               if (!call.isExecuted()) {
+                   callInternet();
+               }
+           }
             return  true;
 
         }
@@ -124,14 +126,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
                 break;
             case "1":
-                whereCondition = MovieContract.Movie.COLUMN_TOPRATED_MOVIES + " = ?";
+                whereCondition = MovieContract.Movie.COLUMN_TOPRATED_MOVIES + " = ? ";
                 call = getResposeInterface.getTopRatedMovies(API_KEY);
                 order = MovieContract.Movie.COLUMN_VOTE_AVERAGE + " DESC";
                 topMovies = true;
                 ((MainActivity)getContext()).setTitle(getString(R.string.toprated));
                 break;
             case "2":
-                whereCondition = MovieContract.Movie.COLUMN_POPULAR_MOVIES + " = ?";
+                whereCondition = MovieContract.Movie.COLUMN_POPULAR_MOVIES + " = ? ";
                 call = getResposeInterface.getPopularMovies(API_KEY);
                 order = MovieContract.Movie.COLUMN_POPULARITY;
                 popularMovies = true;
@@ -141,18 +143,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         Cursor check = getActivity().getContentResolver().query(MovieContract.Movie.CONTENT_URI,
                 new String[]{MovieContract.Movie.COLUMN_ID},
-                whereCondition,
+                whereCondition + " AND " + MovieContract.Movie.COLUMN_FAVORITE_MOVIES + " != 1",
                 new String[]{"1"},
                 null);
 
-        if (check.getCount() == 0) {
+        if (check.getCount() == 0&& !mMoviePref.equals("0")) {
 
             if(!checkInternet(getContext()))
             {
                 Toast.makeText(getContext(), "check your internet connections....", Toast.LENGTH_LONG).show();
-            }
-            if  (mMoviePref.equals("0")) {
-                Toast.makeText(getContext(), "you have no Favorite Movie", Toast.LENGTH_LONG).show();
             }
             else
             {
@@ -184,7 +183,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data.getCount() == 0&& mMoviePref.equals("0"))
+        {
+            Toast.makeText(getContext(),"NO favorite Movies there",Toast.LENGTH_LONG).show();
+        }
+
         mMovieAdapter.swapCursor(data);
+
 
     }
 
@@ -219,6 +224,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     values1.put(MovieContract.Movie.COLUMN_POSTER_PATH, result.posterPath);
                     values1.put(MovieContract.Movie.COLUMN_TOPRATED_MOVIES, topMovies);
                     values1.put(MovieContract.Movie.COLUMN_POPULAR_MOVIES, popularMovies);
+
                     values1.put(MovieContract.Movie.COLUMN_POPULARITY, result.popularity);
                     contentValuesList.add(values1);
                 }
