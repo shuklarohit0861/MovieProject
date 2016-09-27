@@ -61,6 +61,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public interface Callto
     {
         public void onItemSelected(Uri dateUri);
+
     }
 
     @Override
@@ -222,6 +223,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         {
             gridView.smoothScrollToPosition(mPosition);
         }
+
+
+
+
 
 
     }

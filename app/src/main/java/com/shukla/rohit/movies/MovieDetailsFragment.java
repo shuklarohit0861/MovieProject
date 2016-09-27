@@ -77,6 +77,8 @@ public class MovieDetailsFragment extends Fragment  {
     private static final int YOUTUBE_ADAPTER= 1;
     private static final int REVIEW_ADAPTER = 2;
     private ToggleButton toggleButton;
+    Uri uri;
+    Bundle bundle;
 
 
     public MovieDetailsFragment() {
@@ -87,11 +89,13 @@ public class MovieDetailsFragment extends Fragment  {
                              Bundle savedInstanceState) {
 
         GetResposeInterface getResposeInterface = TheMovieDataBase.getClient().create(GetResposeInterface.class);
-        Intent intent = getActivity().getIntent();
-        if(intent != null) {
-            Uri uri = intent.getData();
-            movieId = MovieContract.Movie.getMovieID(uri);
+        bundle = getArguments();
 
+
+        if(bundle != null) {
+
+            uri = bundle.getParcelable(MovieDetailsFragment.DETAILED_URI);
+            movieId = MovieContract.Movie.getMovieID(uri);
             Cursor count = getActivity().getContentResolver().query(MovieContract.Youtube.buildYoutubeId(movieId),
                     new String[]{MovieContract.Youtube.ID},
                     null,
@@ -226,13 +230,13 @@ public class MovieDetailsFragment extends Fragment  {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            Intent intent = getActivity().getIntent();
-            if (intent == null || intent.getData() == null) {
+
+            if (bundle == null) {
                 return null;
             }
             return new CursorLoader(
                     getActivity(),
-                    intent.getData(),
+                    uri,
                     projection,
                     null,
                     null,
@@ -262,6 +266,10 @@ public class MovieDetailsFragment extends Fragment  {
     {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            if(bundle == null)
+            {
+                return  null;
+            }
 
             return new CursorLoader(getContext(), MovieContract.Youtube.buildYoutubeId(String.valueOf(movieId)),
                     new String[]{MovieContract.Youtube._ID, MovieContract.Youtube.YOUTUBE_ID},
@@ -287,6 +295,10 @@ public class MovieDetailsFragment extends Fragment  {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+            if(bundle == null){
+                return null;
+            }
             return new CursorLoader(getContext(), MovieContract.MovieReview.buildMovieReviewId(movieId),
                     new String[]{MovieContract.MovieReview._ID, MovieContract.MovieReview.REVIEW, MovieContract.MovieReview.REVIEWED_BY},
                     null,

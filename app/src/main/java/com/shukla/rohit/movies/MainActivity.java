@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
     private boolean mTwopane;
     private static final String MOVIEDETAIL_TAG = "DFTAG";
+    Uri dataMovieUri;
 
 
     @Override
@@ -29,9 +30,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
             if(savedInstanceState == null)
             {
-               getSupportFragmentManager().beginTransaction()
-                       .replace(R.id.fragmentDetail,new MovieDetailsFragment(),MOVIEDETAIL_TAG)
-                        .commit();
+
+
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentDetail,new MovieDetailsFragment(),MOVIEDETAIL_TAG).commit();
             }
         }
         else
@@ -87,4 +89,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }
 
     }
+
+
 }
