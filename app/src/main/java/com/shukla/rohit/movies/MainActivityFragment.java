@@ -165,7 +165,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 new String[]{"1"},
                 null);
 
-        if (check.getCount() == 0&& !mMoviePref.equals("0")) {
+        if (check.getCount() == 0 && !mMoviePref.equals("0")) {
 
             if(!checkInternet(getContext()))
             {
