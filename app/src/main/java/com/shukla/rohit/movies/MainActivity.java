@@ -1,6 +1,7 @@
 package com.shukla.rohit.movies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,7 +10,7 @@ import android.view.MenuItem;
 
 import com.facebook.stetho.Stetho;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callto {
 
     private boolean mTwopane;
     private static final String MOVIEDETAIL_TAG = "DFTAG";
@@ -61,5 +62,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onItemSelected(Uri dateUri) {
+
+        if(mTwopane)
+        {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MovieDetailsFragment.DETAILED_URI,dateUri);
+
+            MovieDetailsFragment details = new MovieDetailsFragment();
+            details.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentDetail,details,MOVIEDETAIL_TAG).commit();
+
+        }
+        else
+        {
+            Intent intent = new Intent(this,MovieDetails.class)
+                    .setData(dateUri);
+            startActivity(intent);
+        }
+
     }
 }

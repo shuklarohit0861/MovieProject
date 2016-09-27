@@ -2,7 +2,6 @@ package com.shukla.rohit.movies;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -47,13 +46,22 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final int MOVIE_LOADER = 0;
     private MovieAdapter mMovieAdapter;
     private String mMoviePref;
-     private SharedPreferences mPreferences;
+    private SharedPreferences mPreferences;
     private String whereCondition;
     Call<MovieModel> call;
     boolean topMovies = false;  
     boolean popularMovies = false;
-     private String order = null;
+    private String order = null;
+    private static final String SELECTED_KEY = "selected_position";
+    private int mPosition;
+    GridView gridView;
 
+
+
+    public interface Callto
+    {
+        public void onItemSelected(Uri dateUri);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -62,6 +70,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         super.onCreateOptionsMenu(menu, inflater);
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -99,6 +109,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         setHasOptionsMenu(true);
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
+
         mMoviePref = mPreferences.getString(getString(R.string.key_pref),getString(R.string.popular_movies_value));
 
 
@@ -106,15 +122,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GetResposeInterface getResposeInterface = TheMovieDataBase.getClient().create(GetResposeInterface.class);
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridView);
+         gridView= (GridView) rootView.findViewById(R.id.gridView);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
-                Intent intent = new Intent(getContext(),MovieDetails.class)
-                        .setData(MovieContract.Movie.buildMovieID(cursor.getString(1)));
-                startActivity(intent);
+                if(cursor != null)
+                {
+                    ((Callto) getActivity()).onItemSelected(MovieContract.Movie.buildMovieID(cursor.getString(1)));
+                }
+                mPosition = i;
             }
         });
 
@@ -163,8 +181,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         gridView.setAdapter(mMovieAdapter);
 
         return rootView;
-
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(mPosition != GridView.INVALID_POSITION)
+        {
+            outState.putInt(SELECTED_KEY,mPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -189,6 +217,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
 
         mMovieAdapter.swapCursor(data);
+
+        if(mPosition != GridView.INVALID_POSITION)
+        {
+            gridView.smoothScrollToPosition(mPosition);
+        }
 
 
     }

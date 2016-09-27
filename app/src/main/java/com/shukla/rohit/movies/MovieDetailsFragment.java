@@ -44,6 +44,8 @@ import retrofit2.Response;
  */
 public class MovieDetailsFragment extends Fragment  {
 
+    public static final String DETAILED_URI = "URI";
+
     String[] projection = new String[]{
             MovieContract.Movie._ID,
             MovieContract.Movie.COLUMN_ID,
