@@ -228,12 +228,14 @@ public class MovieProvider extends ContentProvider {
 
                         if(cursor.getInt(0) != 0)
                         {
+
                              int i = db.update(MovieContract.Movie.TABLE_NAME,values1,MovieContract.Movie.COLUMN_ID + " = ?",
                                    new String[]{values1.getAsString(MovieContract.Movie.COLUMN_ID)});
                             returnCount = returnCount + i;
                         }
                         else
                         {
+                            values1.put(MovieContract.Movie.COLUMN_FAVORITE_MOVIES,false);
                             long _id = db.insert(MovieContract.Movie.TABLE_NAME,null,values1);
                                 if(_id != -1)
                                 {
@@ -258,6 +260,7 @@ public class MovieProvider extends ContentProvider {
                 try{
                     for(ContentValues values1 : values)
                     {
+
                       long _id =  db.insert(MovieContract.Youtube.TABLE_NAME,null,values1);
                         if (_id != -1)
                         {

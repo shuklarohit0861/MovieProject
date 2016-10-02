@@ -62,7 +62,7 @@ public class MovieDetailsFragment extends Fragment  {
     private ImageView poster;
     private TextView rating;
     private TextView title;
-    boolean fav;
+    boolean fav = false;
     private TextView overviewTextView;
     String url = "http://image.tmdb.org/t/p/w500/";
     private static final int MOVIE_DETAIL_LOADER = 0;
@@ -192,14 +192,17 @@ public class MovieDetailsFragment extends Fragment  {
            @Override
            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
+                if(movieId != null) {
 
-                   ContentValues contentValues = new ContentValues();
-                   contentValues.put(MovieContract.Movie.COLUMN_FAVORITE_MOVIES,!fav);
-                   getActivity().getContentResolver().update(MovieContract.Movie.buildMovieID(movieId),
-                           contentValues,
-                           MovieContract.Movie.COLUMN_ID +" = ?",
-                           new String[]{movieId}
-                           );
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MovieContract.Movie.COLUMN_FAVORITE_MOVIES, !fav);
+                    getActivity().getContentResolver().update(MovieContract.Movie.buildMovieID(movieId),
+                            contentValues,
+                            MovieContract.Movie.COLUMN_ID + " = ?",
+                            new String[]{movieId}
+                    );
+                }
 
            }
        });
@@ -231,17 +234,17 @@ public class MovieDetailsFragment extends Fragment  {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 
-            if (bundle == null) {
-                return null;
+            if (uri != null) {
+                return new CursorLoader(
+                        getActivity(),
+                        uri,
+                        projection,
+                        null,
+                        null,
+                        null
+                );
             }
-            return new CursorLoader(
-                    getActivity(),
-                    uri,
-                    projection,
-                    null,
-                    null,
-                    null
-            );
+            return null;
         }
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -266,17 +269,17 @@ public class MovieDetailsFragment extends Fragment  {
     {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            if(bundle == null)
-            {
-                return  null;
-            }
+            if(uri != null) {
 
-            return new CursorLoader(getContext(), MovieContract.Youtube.buildYoutubeId(String.valueOf(movieId)),
-                    new String[]{MovieContract.Youtube._ID, MovieContract.Youtube.YOUTUBE_ID},
-                    null,
-                    null,
-                    null
-                    );
+
+                return new CursorLoader(getContext(), MovieContract.Youtube.buildYoutubeId(String.valueOf(movieId)),
+                        new String[]{MovieContract.Youtube._ID, MovieContract.Youtube.YOUTUBE_ID},
+                        null,
+                        null,
+                        null
+                );
+            }
+            return  null;
         }
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -296,18 +299,21 @@ public class MovieDetailsFragment extends Fragment  {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            if(bundle == null){
-                return null;
+            if(uri != null) {
+
+                return new CursorLoader(getContext(), MovieContract.MovieReview.buildMovieReviewId(movieId),
+                        new String[]{MovieContract.MovieReview._ID, MovieContract.MovieReview.REVIEW, MovieContract.MovieReview.REVIEWED_BY},
+                        null,
+                        null,
+                        null);
             }
-            return new CursorLoader(getContext(), MovieContract.MovieReview.buildMovieReviewId(movieId),
-                    new String[]{MovieContract.MovieReview._ID, MovieContract.MovieReview.REVIEW, MovieContract.MovieReview.REVIEWED_BY},
-                    null,
-                    null,
-                    null);
+            return null;
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+
                 reviewAdapter = new ReviewAdapter(getContext(),data,REVIEW_LOADER);
             mReviewListview.setAdapter(reviewAdapter);
         }

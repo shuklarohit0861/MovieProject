@@ -162,8 +162,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         Cursor check = getActivity().getContentResolver().query(MovieContract.Movie.CONTENT_URI,
                 new String[]{MovieContract.Movie.COLUMN_ID},
-                whereCondition + " AND " + MovieContract.Movie.COLUMN_FAVORITE_MOVIES + " != 1",
-                new String[]{"1"},
+                whereCondition + " AND " + MovieContract.Movie.COLUMN_FAVORITE_MOVIES + " != ?" + " AND " + MovieContract.Movie.COLUMN_FAVORITE_MOVIES
+                        + " != ? ",
+                new String[]{"1","0"},
                 null);
 
         if (check.getCount() == 0 && !mMoviePref.equals("0")) {
@@ -269,7 +270,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
                 ContentValues[] moviedetails = new ContentValues[contentValuesList.size()];
                 contentValuesList.toArray(moviedetails);
-                getContext().getContentResolver().bulkInsert(MovieContract.Movie.CONTENT_URI, moviedetails);
+                if(!moviedetails.equals(null)) {
+                    getContext().getContentResolver().bulkInsert(MovieContract.Movie.CONTENT_URI, moviedetails);
+                }
 
             }
 

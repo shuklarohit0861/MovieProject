@@ -24,15 +24,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Stetho.initializeWithDefaults(this);
+
         if(findViewById(R.id.fragmentDetail) != null)
         {
             mTwopane = true;
 
             if(savedInstanceState == null)
             {
-
-
-
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentDetail,new MovieDetailsFragment(),MOVIEDETAIL_TAG).commit();
             }
         }
