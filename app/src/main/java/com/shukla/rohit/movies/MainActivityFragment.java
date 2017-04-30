@@ -121,6 +121,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         mMovieAdapter = new MovieAdapter(getContext(),null,0);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        
+        //init retrofit interface
         GetResposeInterface getResposeInterface = TheMovieDataBase.getClient().create(GetResposeInterface.class);
 
          gridView= (GridView) rootView.findViewById(R.id.gridView);
